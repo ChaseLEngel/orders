@@ -12,9 +12,3 @@
 */
 
 Route::get('/orders', 'OrdersController@index');
-
-Route::get('/api/orders', function () {
-    $orders = App\Order::all();
-
-    return $orders;
-});

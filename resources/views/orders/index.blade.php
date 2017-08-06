@@ -1,5 +1,6 @@
 <html>
   <head>
+  <script text="text/javascript" src="{{ URL::asset('js/serviceworker/register.js') }}"></script>
   <title>Orders</title>
   </head>
 
