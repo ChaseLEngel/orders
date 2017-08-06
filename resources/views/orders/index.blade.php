@@ -7,50 +7,55 @@
   </head>
 
   <body>
-    <h4>Orders</h4>
-
-    <table id="app">
-      <th>Item</th>
-      <th>Quantity</th>
-      <th>Address</th>
-      <th>Driver ID</th>
-        <tr v-for="order in orders">
-          <td> @{{ order.item }} </td>
-
-          <td> @{{ order.quantity }} </td>
-
-          <td> @{{ order.address }} </td>
-
-          <td> @{{ order.driver_id }} </td>
-
-          <td>
-            <button type="button" @click="completeOrder">Complete</button>
-          </td>
-        </tr>
-      </table>
+    <div id="app">
+      <div v-for="order in orders">
+        <order :order="order"></order>
+      </div>
+    </div>
   </body>
 
+  <template id="order-template">
+    <div>
+      <span> @{{ order.item }} </span>
+      <span> @{{ order.quantity }} </span>
+      <span> @{{ order.address }} </span>
+      <span> @{{ order.driver_id }} </span>
+    </div>
+  </template>
+
   <script>
-    var app = new Vue({
-      el: '#app',
-      data: {
-        orders: [
-          {
-            item: 'cat',
-            quantity: 4,
-            address: '4834 Windy St.',
-            driver_id: 17
-          },
-          {
-            item: 'Bike',
-            quantity: 1,
-            address: '1244 Lone Rd.',
-            driver_id: 17
-          }
-        ]
+
+    var orders = [
+      {
+        item: 'Hat',
+        quantity: 10,
+        address: '1234 Lake St.',
+        driver_id: 13
       },
-      methods: {
-        completeOrder: function () { console.log("completeOrder"); }
+      {
+        item: 'Shoe',
+        quantity: 8,
+        address: '4835 Blake Rd.',
+        driver_id: 4
+      },
+      {
+        item: 'Shirt',
+        quantity: 2,
+        address: '3843 Lane St.',
+        driver_id: 3
+      }
+    ]
+
+    new Vue({
+      el: '#app',
+      data: function() {
+          return { orders: orders }
+      },
+      components: {
+        order: {
+          template: "#order-template",
+          props: ['order']
+        }
       }
     });
   </script>
