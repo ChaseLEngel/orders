@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
 	    			$table->string('address');
 	    			$table->string('item');
 	    			$table->integer('quantity');
+	    			$table->boolean('completed')->default(false);
 	    			$table->integer('driver_id');
             $table->timestamps();
         });

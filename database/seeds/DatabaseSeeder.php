@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Seeder;
 
+use App\Order;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -12,5 +14,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
+        factory(Order::class, 5)->create();
     }
 }
