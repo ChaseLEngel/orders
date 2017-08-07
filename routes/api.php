@@ -14,11 +14,19 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 });
 
 Route::get('/orders', function () {
-    $orders = App\Order::all();
+  $orders = App\Order::all();
 
-    return $orders;
+  return $orders;
+});
+
+Route::put('/orders', function (Request $request) {
+  forEach($request->json()->all() as $data) {
+    $order = App\Order::find($data['id']);
+    $order->completed = $data['completed'];
+    $order->save();
+  }
 });
