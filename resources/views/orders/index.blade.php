@@ -5,13 +5,14 @@
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
-    <script text="text/javascript" src="{{ URL::asset('js/serviceworker/register.js') }}"></script>
+    <script text="text/javascript" src="{{ URL::asset('register.js') }}"></script>
     <title>Orders</title>
   </head>
 
   <body>
 
     <div class="container" id="app">
+    <div v-show="showSaveAlert" class="alert text-center" :class="{'alert-danger': saveError, 'alert-success': !saveError}"> @{{saveError ? 'Failed to save orders' : 'Successfully saved orders'}}</div>
 
       <div class="text-center">
         <h3>All Orders</h3>
@@ -75,7 +76,9 @@
       data: function() {
           return {
             orders: [],
-            showData: false
+            showData: false,
+            showSaveAlert: false,
+            saveError: false
           }
       },
 
@@ -123,8 +126,21 @@
           var vm = this;
 
           this.getOrders().then(function(orders) {
-            vm.$http.put('api/orders', orders);
-          }).catch(function(e) { console.log(e); });
+            vm.$http.put('api/orders', orders).then(function() {
+
+              vm.saveError = false;
+
+            }).catch(function(e) {
+
+              vm.saveError = true;
+              console.log(e);
+
+            }).finally(function() {
+
+              vm.showSaveAlert = true;
+
+            });
+          });
         },
 
         toggleShowData: function() {
