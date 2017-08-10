@@ -1,11 +1,13 @@
 <html>
   <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
-    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <script text="text/javascript" src="{{ URL::asset('register.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('/js/app.js') }}"></script>
+
+    <link href="{{ URL::asset('css/app.css') }}" type="text/css" rel="stylesheet"></link>
+
+    <script type="text/javascript" src="{{ URL::asset('/register.js') }}"></script>
+
     <title>Orders</title>
   </head>
 
@@ -65,7 +67,8 @@
   </template>
 
   <script>
-    var db = new Dexie("LPG");
+
+    var db = new Dexie("Orders");
     db.version(1).stores({
       orders: "++id,item,quantity,address,driver_id,completed,created_at,updated_at"
     });
@@ -116,7 +119,7 @@
 
           }).catch(Dexie.BulkError, function(e) {
 
-            console.log(e);
+            console.error(e);
 
           });
         },
@@ -133,7 +136,7 @@
             }).catch(function(e) {
 
               vm.saveError = true;
-              console.log(e);
+              console.error("Failed to save orders.");
 
             }).finally(function() {
 
