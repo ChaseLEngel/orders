@@ -94,13 +94,15 @@
         fetchOrders: function() {
           this.$http.get('api/orders').then(function(response) {
 
-            console.log(`Fetched ${response.body.length} orders from API.`);
+            console.log(response);
+          
+            //console.log(`Fetched ${response.body.length} orders from API.`);
 
             // Update IndexedDB with new data.
             this.syncWithOrdersStore(response.body);
 
           }).catch(function(e) {
-            console.error("Failed to get orders from api.");
+            console.error("Failed to get orders from api:" + e);
           });
         },
 
