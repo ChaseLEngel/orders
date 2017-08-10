@@ -1,55 +1,58 @@
 var cacheName = "lpg"
 
+var cacheWhitelist = [
+  '/orders',
+  '/js/app.js',
+  '/js/dexie.js',
+  '/css/app.css'
+];
 
 self.importScripts('/js/dexie.js');
 
-self.addEventListener('install', function(e) {
+self.addEventListener('install', function(event) {
 
-  console.log("[SERVICEWORKER] Install")
-
-  var filesToCache = [
-    '/orders',
-    '/js/app.js',
-    '/js/dexie.js',
-    '/css/app.css'
-  ];
-
-  e.waitUntil(
+  event.waitUntil(
     caches.open(cacheName).then(function(cache) {
-      console.log("[SERVICEWORKER] Caching files")
-      return cache.addAll(filesToCache)
+      return cache.addAll(cacheWhitelist)
     })
   );
+
 });
 
 self.addEventListener('fetch', function(event) {
-  console.log(event.request.method + " " + event.request.url);
+  event.respondWith(contactNetwork(event.request));
+});
 
-  // Network falling back to cache approach.
-  event.respondWith(
-    fetch(event.request).catch(function() {
+// Fetch request from network and fall back to cache if network fails.
+function contactNetwork(request) {
 
-      if(event.request.url.match('/api/orders') && event.request.method == 'GET') {
-        console.log("[SERVICEWORKER] Captured GET request for /api/orders.");
+  return fetch(request).then(function(response) {
+    console.log("Successful response for " + request.url);
 
-        // Open IndexedDB store
-        var db = new Dexie("Orders");
-        db.version(1).stores({
-          orders: "++id,item,quantity,address,driver_id,completed,created_at,updated_at"
-        });
+    updateCache(request, response.clone());
 
-        var allOrders = [];
-        db.transaction("r", db.orders, function() {
-          db.orders.toArray().then(function(orders) {
-            allOrders = orders;
-          });
-        })
+    return response;
+  }).catch(function(error) {
+    console.log("Failed response for " + request.url + " error :" + error);
 
-        // Potential race condition for return and transaction return?
-        return new Response(JSON.stringify(allOrders));
-      } else {
-        return caches.match(event.request);
+    if(request.url.match('/api/orders') && request.method == 'GET') {
+      return new Response(JSON.stringify([]));
+    } else {
+      return caches.match(request);
+    }
+
+  })
+
+}
+
+// Update cached request/response pair only if request has been previously cached.
+function updateCache(request, response) {
+  return caches.open(cacheName).then(function(cache) {
+    return cache.match(request).then(function(match) {
+      if(match) {
+        console.log("Updated cache for " + request.url);
+        return cache.put(request, response);
       }
     })
-  );
-});
+  })
+}

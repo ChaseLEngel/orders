@@ -14,15 +14,9 @@
   <body>
 
     <div class="container" id="app">
-    <div v-show="showSaveAlert" class="alert text-center" :class="{'alert-danger': saveError, 'alert-success': !saveError}"> @{{saveError ? 'Failed to save orders' : 'Successfully saved orders'}}</div>
 
       <div class="text-center">
         <h3>All Orders</h3>
-      </div>
-
-      <div class="row text-right">
-        <input type="text"></input>
-        <button type="button" class="btn btn-default btn-sm">Search</button>
       </div>
 
       <ul class="list-group">
@@ -41,6 +35,10 @@
         </li>
 
       </ul>
+
+      <div v-show="showSaveAlert" class="alert text-center" :class="{'alert-danger': saveError, 'alert-success': !saveError}">
+        @{{saveError ? 'Failed to save orders' : 'Successfully saved orders'}}
+      </div>
 
       <div class="text-center">
         <button type="button" class="btn btn-primary" @click="saveOrders">Save</button>
